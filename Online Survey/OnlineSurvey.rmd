@@ -41,21 +41,45 @@ sex_df <- data.frame(Sex = names(sex_counts), Count = as.numeric(sex_counts))
 sex_df
 ```
 ```{r 4}
-ggplot(sex_df, aes(x = " ", y = Count, fill = Sex)) 
-geom_bar(stat = "identity", width = 1) 
-coord_polar("y", start = 0) 
-ggtitle("Sex Distribution") 
-theme_void() 
-scale_fill_manual(values = c("Male" = "darkblue", "Female" = "pink"))
+GraphMF<- table(survey_data$Sex)
+barplot(GraphMF,
+        main = "Number of Males and Females",
+        xlab = "Gender",
+        ylab = "Count",
+        col = c("plum", "skyblue"),
+        legend.text = c("Female", "Male"),
+        beside = TRUE
+)
 ```
 
 
-```{r5}
+```{r 5}
 school_counts <- table(survey_data$School)
 school_counts
 school_df <- data.frame(School = names(school_counts), Count = as.numeric(school_counts))
 school_df
-ggplot2(school_df, aes(x = School, y = Count, fill = School)) +
+```
+```{r 6}
+
+school_df$School <- tolower(school_df$School)
+
+
+school_df$School <- trimws(school_df$School)
+
+# Replace variations of school names with the correct one
+school_df$School <- gsub("university of iloilo", "University of Iloilo", school_df$School)
+school_df$School <- gsub("iloilo state university of fisheries science and technology", "Iloilo State University of Fisheries Science and Technology", school_df$School)
+school_df$School <- gsub("phinma ui", "PHINMA - University of Iloilo", school_df$School)
+# Add more replacements as needed for other variations of school names
+
+# Count occurrences of each school after cleaning
+school_counts <- table(school_df$School)
+
+# Create a new data frame for cleaned school names and counts
+cleaned_school_df <- data.frame(School = names(school_counts), Count = as.numeric(school_counts))
+
+
+ggplot(school_df, aes(x = School, y = Count, fill = School)) +
   geom_bar(stat = "identity") +
   ggtitle("School Distribution") +
   xlab("School") +
@@ -65,23 +89,52 @@ ggplot2(school_df, aes(x = School, y = Count, fill = School)) +
 
 
 
-```{r6}
+```{r 6}
+
+survey_data$Age <- as.numeric(as.character(survey_data$Age)) 
+
 age_breaks <- c(18, 19, 22, Inf)
 age_breaks
 
 age_labels <- c("18-20", "19-22", "22-and-above")
 age_labels
 
+
 survey_data$Age_Group <- cut(survey_data$Age, breaks = age_breaks, labels = age_labels, right = FALSE)
 survey_data$Age_Group
 
 table(survey_data$Age_Group)
 
-```
 
-
-```{r7}
 survey_data$Age_Group <- factor(survey_data$Age_Group, levels = age_labels)
 survey_data$Age_Group
 ```
 
+```{r 7}
+
+age_counts <- table(survey_data$Age_Group)
+age_df <- data.frame(Age_Group = names(age_counts), Count = as.numeric(age_counts))
+
+ggplot(age_df, aes(x = Age_Group, y = Count, fill = Age_Group)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Age Distribution") +
+  xlab("Age Group") + ylab("Count") +
+  scale_fill_manual(values = c("18-20" = "aquamarine", "19-22" = "aquamarine2", "22-and-above" = "aquamarine3")) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+
+
+
+
+```{r 8}
+survey_data$Course <- factor(survey_data$Course)
+survey_data$Course
+
+
+
+
+```
